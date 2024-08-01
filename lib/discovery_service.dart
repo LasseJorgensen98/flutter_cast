@@ -20,7 +20,7 @@ class CastDiscoveryService {
     final discovery = BonsoirDiscovery(type: _domain);
     await discovery.ready;
 
-    discovery.eventStream!.listen((event) {
+    final sub = discovery.eventStream!.listen((event) {
       if (event.type == BonsoirDiscoveryEventType.discoveryServiceFound) {
         event.service?.resolve(discovery.serviceResolver);
       } else if (event.type == BonsoirDiscoveryEventType.discoveryServiceResolved) {
@@ -60,6 +60,8 @@ class CastDiscoveryService {
     await discovery.start();
     await Future.delayed(timeout);
     await discovery.stop();
+
+    sub.cancel();
 
     return results.toSet().toList();
   }
